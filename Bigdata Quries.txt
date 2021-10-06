@@ -1,0 +1,179 @@
+sbin/stop-all.sh----- Stop all nodes,namenode,datanode,secondary node
+ssh localhost--------->Start ssh
+sudo service ssh status--->chech the status
+sudo service ssh start--->if not running usr it
+bin/hdfs namenode -format--->if there is we
+
+-------->
+sbin/stop-dfs.sh
+ssh localhost
+bin/hdfs namenode -format
+rm -rf hdfs.sh
+
+start the Yarn in hdfs or resource manger an nodemanager which will start the yarn or nodemanager
+sbin/start-yarn.sh
+
+----------------------------------------------------------------------------------------------
+multipal times there is bin/hdfs namenode -format 
+Error -->(namenode is running as process 4604.  Stop it first and ensure /tmp/hadoop-kalpesh-namenode.pid file is empty before retry.)
+
+a)remove the directory --> reasone multipal namenode create heance the multipal namenode is created 
+
+			a)rm -rf DATA
+			b)mkdir DATA
+b)then stop the namenode-->sbin/stop-dfs.sh
+c)then after start the namenode  -->sbin/start-dfs.sh
+d)check the node -->jps
+e)go on localhost --->http://localhost:9870/dfshealth.html#tab-datanode
+---------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+a)Query for run the  .jar file
+-->hadoop jar mapreduce.wordcount-0.0.1-SNAPSHOT.jar com.asdtech.wordcount.WordCountJob /user/kalpesh/README.txt /user/kalpesh/output
+
+b)open a localost
+-->http://localhost:8088/cluster
+
+c)input file location
+hdfs dfs -ls
+
+d)output file location
+there are two files ganarate
+1)Success
+2)part-r-00000
+   a)hdfs dfs -cat output/part-r-00000
+	or in your desktop
+
+   b)http://localhost.localdomain:9864/webhdfs/v1/user/kalpesh/stream_out_2/part-00000?op=OPEN&namenoderpcaddress=localhost:9000&offset=0
+
+		
+C:/Users/LENOVO/Desktop/Bigdata/Edbda_Feb2021/target/edbda-0.0.1-SNAPSHOT.jar com.asdtech.edbda.chainedmrjob /user/kalpesh/R  /user/output1
+
+hadoop jar edbda-0.0.1-SNAPSHOT.jar com.asdtech.edbda.chainedmrjob /user/kalpesh/README.txt  /user/kalpesh/output1
+
+hadoop jar edbda-0.0.1-SNAPSHOT.jar com.asdtech.edbda.chainedmrjob /user/kalpesh/README.txt /user/kalpesh/output1
+
+
+C:\Users\LENOVO\Desktop\Bigdata\Edbda_Feb2021\target\edbda-0.0.1-SNAPSHOT.jar
+---------------------------------------------------------------------------------------------
+Error-->when datanode is low or not find in jps
+solution-->
+
+---------------------------------------------------------------------------------------------
+Hodoop Streming
+[In hadoop streaming no need of creating the mapper nad redusr in eclips ,its providing 
+mapper and reduser directly,but its only on econdition that is nothing but its required standerd input and standrd output]
+
+-->
+a)Query to run the hadoop streaming
+
+	hadoop jar ./share/hadoop/tools/lib/hadoop-streaming-3.3.1.jar -input NOTICE.txt -output stream_out_2 -mapper myCat.sh -reducer /usr/bin/wc -file ./myCat.sh
+
+i) after applying this Query i got best errors
+  a)Error---Streaming Command Failed!
+	solution
+	a) ./ for current directory of hadoop
+	b)hdfs dfs -mkdir -p /user/kalpesh
+	c)hdfs dfs -put NOTICE.txt
+
+
+
+i)in this Query 1st is path of stream ,2nd is input file ,3rd is output file with proper file location
+
+----------------------------------------------------------------------------------------------------------
+How to check in container mapper,reduser,
+
+cd logs/userlogs/
+
+here we get coatiner 
+application_1628783347941_0001, application_1628783347941_0002, application_1628783347941_0003
+
+1)application_1628783347941_0001--->its node manager
+2)application_1628783347941_0002--->its mapper
+3)application_1628783347941_0003--->its reduser
+
+
+----------------------------------------------------------------
+Mapper stage
+Map stage − The map or mapper’s job is to process the input data
+2)Generally the input data is in the form of file or directory and is stored in the Hadoop file system (HDFS)
+3)The input file is passed to the mapper function line by line
+4)The mapper processes the data and creates several small chunks of data.
+
+Reduce stage
+a)This stage is the combination of the Shuffle stage and the Reduce stage
+b)he Reducer’s job is to process the data that comes from the mapper
+
+1)During a MapReduce job, Hadoop sends the Map and Reduce tasks to the appropriate servers in the cluster.
+2)The framework manages all the details of data-passing such as issuing tasks, verifying task completion, and copying data around the cluster between the nodes.
+3)Most of the computing takes place on nodes with data on local disks that reduces the network traffic.
+4)After completion of the given tasks, the cluster collects and reduces the data to form an appropriate result, and sends it back to the Hadoop server.
+
+/mnt/c/Users/LENOVO/Desktop/Bigdata/Hadoop_streamin
+sbin/hadoop-daemon.sh start namenode -upgrade 
+
+---------------------------------------------------------------------------------------------------
+*******************pig********************
+
+chmod 644 pig-0.17.0.tar.gz
+tar xvzf pig-0.17.0.tar.gz
+cd pig-0.17.0/
+cd bin
+./pig -x local
+
+Loading the data :
+1) grunt> train_data = LOAD '/tmp/Train_Dataset.csv' using PigStorage('|');
+2) DUMP train_data
+
+Seperator '|'
+1)  train_data = LOAD 'Train_Dataset.csv' using PigStorage('|') As(trainNo:chararray, trainIn:int, trainOut:int, trainSpeed:int, inDir:chararray, outDir:chararray, duration:chararray);
+2)  DUMP train_data
+
+Describe Data
+1) grunt> DESCRIBE train_data;
+
+GroupBy Direction
+1) grunt> same_dir_trains = GROUP train_data BY inDir;
+2) grunt> DUMP same_dir_trains
+
+Finding fastest train in each group
+1) grunt> fastest_train_per_dir = FOREACH same_dir_trains GENERATE group, MAX(train_data.trainSpeed);
+2) DUMP fastest_train_per_dir 
+
+View files
+1) grunt> fs -ls /home
+-------------------------------------------------------------------------------------------------------
+***********************************sqoop***************************
+/sqoop-1.4.7 bin_hadoop/bin
+./sqoop help
+ 
+cmds fails to find error location ot its big challanges
+
+
+sudo systemctl status mysql
+sudo mysql_sequre_in
+satllation
+sudo mysql
+
+downlode jdbc jar
+1)in lib connect the 
+1)sudo apt-get install ./mysql-connector-java_8.0.26-1ubuntu20.04_all.deb
+./sqoop import --connect "jdbc:mysql://localhost/" --username kalpesh -P --table "dataset_name" 
+
+-----------------------------------------------------------------------------------------------------
+********************************hive****************************
+ chmod 644 hive-2.3.8.tgz
+ tar xvzf hive-2.3.8.tgz 
+cd hive-2.3.8/   
+cd apache-hive-2.3.8-bin/  
+pwd (copy the output)
+vi ~/.bashrc   
+source ~/.bashrc
+
+#add this to the bashrc file
+export HIVE_HOME=/home/techsherry/hive-2.3.8/apache-hive-2.3.8-bin  
+ ./bin/schematool -initSchema -dbType derby   
+./bin/hive 
+
+cmd for metastore
+
+
